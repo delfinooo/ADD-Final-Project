@@ -7,10 +7,10 @@
 
 module Mux2to1 (in1, in2, select, select_out);
     //input clk, rst;
-    input [3:0] in1, in2;
+    input [6:0] in1, in2;
     input select;
-    output [3:0] select_out;
-    reg [3:0] select_out;
+    output [6:0] select_out;
+    reg [6:0] select_out;
     
     always@(select)
         begin
