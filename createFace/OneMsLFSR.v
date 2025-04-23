@@ -1,6 +1,7 @@
 // ECE5440 10409
 // Tyler Nguyen 8480
-// One Milisecond Timer LFSR Module. The OneMsLFSR module generates a timeout signal of 1 millisecond using a 16-bit Linear Feedback Shift Register (LFSR).
+// One Milisecond Timer LFSR Module. 
+// The OneMsLFSR module generates a timeout signal of 1 millisecond using a 16-bit Linear Feedback Shift Register (LFSR).
 // When the reset signal is low, the timer resets to 0, and the timeout output is also set to 0. On each clock cycle, 
 // if the enable signal is high, the LFSR manually shifts its bits, incorporating feedback to create a pseudo-random sequence. 
 // Once the LFSR reaches a specific state (16'h6db6), which corresponds to the 50,000th state, the timeout signal is set high, indicating the completion of the timeout period. 
