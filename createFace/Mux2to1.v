@@ -7,7 +7,7 @@
 
 module Mux2to1 (in1, in2, select, select_out);
     //input clk, rst;
-    input [6:0] in1, in2;
+    input [6:0] in1, in2; // 7-bit inputs
     input select;
     output [6:0] select_out;
     reg [6:0] select_out;
@@ -17,7 +17,7 @@ module Mux2to1 (in1, in2, select, select_out);
             if (select == 1'b0) begin
 	        select_out = in1;
 	     end
-	    else begin
+	    else begin // if select == 1'b1
 	        select_out = in2;
 	     end
         end
