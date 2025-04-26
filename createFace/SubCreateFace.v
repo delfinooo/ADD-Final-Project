@@ -32,7 +32,7 @@ module SubCreateFace(newHighScore, died, timeout, timer_enable, eyes, mouth, sho
            end
           else begin // Normal Operation
               case(State)
-                  NoFace: begin
+                  NoFace: begin // default/waiting state where nothing is happening.
                       timer_enable <= 1'b0;
                       showFace <= 1'b0;
                       eyes <= 7'b1111111;
@@ -47,13 +47,13 @@ module SubCreateFace(newHighScore, died, timeout, timer_enable, eyes, mouth, sho
                           State <= NoFace;
                        end
                    end
-                  HappyFace: begin
+                  HappyFace: begin // Show Happy Face
                       showFace <= 1'b1;
                       eyes <= 7'b1110110;
                       mouth <=7'b1110000;
                       State <= Timer;
                    end
-                  SadFace: begin
+                  SadFace: begin // Show Sad Face
                       showFace <= 1'b1;
                       eyes <= 7'b1110110;
                       mouth <=7'b1000110;
@@ -64,7 +64,7 @@ module SubCreateFace(newHighScore, died, timeout, timer_enable, eyes, mouth, sho
                       if (timeout == 1'b1) begin
                           State <= NoFace;
                        end
-                      else begin
+                      else begin // Stay in timer until timeout siganl goes high
                           State <= Timer;
                        end
                    end
