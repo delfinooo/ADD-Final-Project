@@ -1,19 +1,26 @@
+//ECE 5440
+//Thomas Vo 2179861
+//20-bit random number generator using LFSR
+
 module randnum_LFSR(clock, q);
-  input clock;
-  output [19:0] q;
+input clock;
+output [19:0] q;
 
-  reg [19:0] LFSR;
+reg [19:0] LFSR; // 20-bit Linear Feedback Shift Register
 
-  // Initialize to a non-zero value
-  initial begin
-    LFSR = 20'hABCDE; // Any non-zero seed value
-  end
+// Initialize LFSR to a non-zero seed value to avoid stuck-at-zero state
+initial begin
+    LFSR = 20'hABCDE; // Arbitrary non-zero initial seed
+end
 
-  always @(posedge clock) begin
-    // Taps for maximal-length 20-bit LFSR: bits 20 and 17
-    LFSR[0] <= LFSR[19] ^ LFSR[2];
-    LFSR[19:1] <= LFSR[18:0];
-  end
+always @(posedge clock) begin
+    // Feedback calculation for maximal-length 20-bit LFSR
+    // XOR taps at bit positions 20 and 3 (adjusted from 20 and 17 traditional taps)
+    LFSR[0] <= LFSR[19] ^ LFSR[2]; // New bit = XOR of bit 19 and bit 2
+    LFSR[19:1] <= LFSR[18:0];      // Shift register contents to the right
+end
 
-  assign q = LFSR;
+// Assign current LFSR value to output
+assign q = LFSR;
+
 endmodule
