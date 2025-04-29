@@ -1,7 +1,7 @@
 // ECE 5440 10409
 // Tyler Nguyen 8480
 // Multiplexer 2to1 Module
-// This module implements a 2-to-1 multiplexer that selects between two 4-bit inputs based on a single-bit select signal. 
+// This module implements a 2-to-1 multiplexer that selects between two 7-bit inputs based on a single-bit select signal. 
 // If select = 0, the output is assigned the value of in1. 
 // If select = 1, the output is assigned the value of in2.
 
