@@ -1,3 +1,8 @@
+//ECE 5440
+//Tarek Bakeer 0491
+//sequenceCheck_tb
+//Test bench for the sequence check module
+
 `timescale 1ns / 1ps
 
 module sequenceCheck_tb;
