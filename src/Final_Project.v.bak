@@ -1,0 +1,116 @@
+//ECE5440
+//Author: Delfino Tzul, 6627
+//Lab4_TZUL_Delfino
+//This module encompasses the entirety of Lab4 and changes the AccessController module to a daughterboard with a ROM and RAM.
+//The 1msTimer is also now implemented with an LFSR rather than a counter.
+//All Buttons and 7 Segment Displays on the FPGA are used by the game.
+//Previous features enabled the use of the player switches, and LEDs.
+//The BONUS features including the password reset, log out, and LFSR replacement in the RNG module have all been incorporated into this assignment. 
+//This module contains the following instances:
+//1 instance of the TwoDigitTimer module,
+//1 instance of the TwoDigitScore module,
+//2 instances of the TwoToOneMux module,
+//1 instance of the RNG module, 
+//6 instances of the SevenSegDecoder module,
+//1 instance of the FourBitAdder module,
+//1 instance of the MatchingLED module,
+//2 instances of the ButtonShaper module,
+//1 instances of the LoadRegister module,
+//and 1 instance of the AccessController module.
+//The player's switches are located on the very right of the switches on the FPGA board.
+//The password switches are located on the very left of the switches on the FPGA board.
+
+module Lab4_TZUL_Delfino(Playernum, PasswordDigit, Player_seg, RNG_seg, Sum_Ones_Score_seg, MatchingLED, NonMatchingLED,
+                         P_button, RNG_button, Game_button, rst, clk,
+								 LoggedOut, LoggedIn, 
+								 Timer_Tens_Digit_seg, Timer_Ones_Digit_seg, Score_Tens_Digit_seg);
+								 
+  input [3:0] Playernum;
+  input [3:0] PasswordDigit;
+  wire [3:0] Sum;
+  output [6:0] Player_seg;
+  output [6:0] RNG_seg;
+  output [6:0] Sum_Ones_Score_seg;
+  output [6:0] Timer_Tens_Digit_seg;
+  output [6:0] Timer_Ones_Digit_seg;
+  output [6:0] Score_Tens_Digit_seg;
+  output MatchingLED;
+  output NonMatchingLED;
+  wire Match_Pulse;
+  wire [3:0] AdderSum_out;
+  input P_button;
+  input RNG_button;
+  input Game_button;
+  input rst, clk;
+  
+  output LoggedOut;
+  output LoggedIn;
+
+  wire Load_P_In;
+  wire RNG_button;
+  wire Load_P_Out;
+  wire RNG_Gen;
+  wire [3:0] Randomnum;
+  wire [3:0] P_Out;
+  wire [3:0] RNG_Out;
+  wire Timer_Score_Reconfig;
+  wire Timer_Score_Enable;
+  wire TwoDigitTimeout;
+  wire [3:0] Timer_Tens_Digit;
+  wire [3:0] Timer_Ones_Digit;
+  wire [3:0] Score_Tens_Digit;
+  wire [3:0] Score_Ones_Digit;
+  wire Game_Over;
+  wire [3:0] PassedMUXSignal;
+  wire [3:0] PassedMUXSignal2;
+  wire GameEnter;
+  
+  // Connect Buttons to Button Shaper
+  ButtonShaper P_ButtonShaper(P_button, Load_P_In, clk , rst);
+  ButtonShaper Password_ButonShaper(Game_button, GameEnter, clk, rst); 
+  
+  // Connect Load Register to Player Switches
+  LoadRegister P_LoadRegister(Playernum, P_Out, clk, rst, Load_P_Out);
+  
+  // Connect RNG Module
+  RNG RNG_Mod(RNG_Gen, clk, rst, Randomnum);
+  
+  // Connect Access Controller
+  AccessController Main_AccessControl(GameEnter, PasswordDigit, Load_P_In, RNG_button, TwoDigitTimeout, clk, rst, Load_P_Out, RNG_Gen, 
+                                     LoggedIn, LoggedOut, Timer_Score_Reconfig, Timer_Score_Enable, Game_Over);
+  
+  // Connect Two Digit Timer
+  TwoDigitTimer Main_TwoDigitTimer(Timer_Score_Reconfig, Timer_Score_Enable, clk, rst, TwoDigitTimeout, Timer_Tens_Digit, Timer_Ones_Digit);
+  
+  // Connect Two Digit Timer digit outputs to 7-Segment Display Decoders
+  SevenSegDecoder Timer_TensDigit_Dec(Timer_Tens_Digit, Timer_Tens_Digit_seg);
+  SevenSegDecoder Timer_OnesDigit_Dec(Timer_Ones_Digit, Timer_Ones_Digit_seg);
+  
+  // Compute Sum of the Player and Random Number
+  FourBitAdder Sum_Adder(P_Out, Randomnum, AdderSum_out);
+  
+  // Decode and Display Player and Random Numbers on their 7-Segment Display
+  SevenSegDecoder Player_Dec(P_Out, Player_seg);
+  SevenSegDecoder RNG_Dec(Randomnum, RNG_seg);
+  
+  // Calculate Matching or NonMatching of Sum to 1111
+  MatchingLED MatchingLED_Check(AdderSum_out, RNG_button, clk, rst, Match_Pulse, MatchingLED, NonMatchingLED);
+  
+  // Connect Two Digit Score
+  TwoDigitScore Main_TwoDigitScore(Timer_Score_Reconfig, Timer_Score_Enable, Match_Pulse, clk, rst, Score_Tens_Digit, Score_Ones_Digit);
+  
+  // Connect 2 To 1 Mux
+  TwoToOneMux Sum_Score_MUX(AdderSum_out, Score_Ones_Digit, Game_Over, PassedMUXSignal);
+  
+  // Decode and Display Sum or Ones Digit of Score on 7-Segment Display
+  SevenSegDecoder Sum_Score_Dec(PassedMUXSignal, Sum_Ones_Score_seg);
+  
+  // Connect 2 To 1 Mux to Tens Digit of Score 
+  TwoToOneMux Zero_Score_MUX(4'b0000, Score_Tens_Digit, Game_Over, PassedMUXSignal2);
+  
+  // Decode and Display Tens Digit of Score on 7-Segment Display
+  SevenSegDecoder Score_Tens_Dec(PassedMUXSignal2, Score_Tens_Digit_seg);
+  
+  // Assign Statements
+
+endmodule

@@ -1,0 +1,40 @@
+//ECE 5440
+//Delfino Tzul, 6627
+//CountTo10
+//This module will increase a counter when the input signal, increment, is high.
+//To count 10 times, the counter will output a high signal, timeout, when count is 9.
+//This is to compensate for time when the counter is equal to 0.
+//The counter variable is 'count'.
+//During testing, the counter was modified to count up to 2.
+
+module CountTo10(increment, clk, rst, timeout);
+  input increment;
+  input clk, rst;
+  output timeout;
+  reg timeout;
+  reg [3:0] count;
+  
+  always @(posedge clk) begin
+    if(rst == 1'b0) begin
+      count <= 4'b0000;
+      timeout <= 1'b0;
+    end
+    else begin //regular tasks
+      if(increment == 1'b1) begin
+        if(count == 4'b1001) begin //(9) one less than desired : 10
+        //if(count == 4'b0001) begin //TEST WITH (1) ONE LESS THAN DESIRED: 2
+          timeout <= 1'b1;
+          count <= 4'b0000;
+        end
+        else begin
+          //timeout <= 1'b0;
+          count <= count + 4'b0001; 
+        end
+      end //if(increment == 1'b1)
+      else begin
+        timeout <= 1'b0;
+      end
+    end //else
+  end //always
+
+endmodule 
