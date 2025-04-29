@@ -1,4 +1,10 @@
-   module sequenceCheck
+
+//ECE 5440
+//Tarek Bakeer 0491
+//sequenceCheck
+//Verifies if player input matches a stored sequence based on level.
+
+module sequenceCheck
     (player_num,
      b_player, clk, rst,
      S_in, RAM_addr, RAM_r, correct, LVL, display_done, incorrect);
